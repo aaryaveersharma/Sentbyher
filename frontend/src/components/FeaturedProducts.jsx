@@ -32,7 +32,7 @@ const FeaturedProducts = () => {
         {products.map((product) => (
           <div
             key={product.id}
-            className="group bg-white rounded-lg overflow-hidden hover:shadow-xl transition-all duration-500"
+            className="group bg-white rounded-lg overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col"
           >
             <Link to={`/product/${product.id}`} className="relative block overflow-hidden bg-gray-50 aspect-[4/5]">
               {product.discount && (
@@ -47,10 +47,10 @@ const FeaturedProducts = () => {
               />
             </Link>
 
-            <div className="p-4">
+            <div className="p-4 flex flex-col flex-1">
               <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">{product.category}</p>
               <Link to={`/product/${product.id}`}>
-                <h3 className="text-lg font-bold mb-2 group-hover:text-gray-700 transition-colors duration-300">
+                <h3 className="text-lg font-bold mb-2 group-hover:text-gray-700 transition-colors duration-300 min-h-[56px]">
                   {product.name}
                 </h3>
               </Link>
@@ -75,13 +75,15 @@ const FeaturedProducts = () => {
                 )}
               </div>
 
-              {/* Add to Cart Button */}
-              <button
-                onClick={() => handleAddToCart(product)}
-                className="w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300 text-sm font-medium"
-              >
-                Add to Cart
-              </button>
+              {/* Add to Cart Button - Push to bottom */}
+              <div className="mt-auto">
+                <button
+                  onClick={() => handleAddToCart(product)}
+                  className="w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800 transition-colors duration-300 text-sm font-medium"
+                >
+                  Add to Cart
+                </button>
+              </div>
             </div>
           </div>
         ))}
