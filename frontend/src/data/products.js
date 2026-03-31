@@ -8,10 +8,10 @@ export const products = [
     discount: 35,
     rating: 5,
     reviews: 24,
-    image: 'https://images.unsplash.com/photo-1602874801006-95ad9f5fe4ce?w=800',
+    image: 'https://images.unsplash.com/photo-1602874801006-95ad9f5fe4ce?w=800&h=800&fit=crop',
     images: [
-      'https://images.unsplash.com/photo-1602874801006-95ad9f5fe4ce?w=800',
-      'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=800',
+      'https://images.unsplash.com/photo-1602874801006-95ad9f5fe4ce?w=800&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=800&h=800&fit=crop',
     ],
     description: 'Premium vanilla scented candle with natural soy wax. Hand-poured with essential oils for a luxurious aromatherapy experience.',
     features: [
@@ -31,10 +31,10 @@ export const products = [
     discount: 38,
     rating: 5,
     reviews: 18,
-    image: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=800',
+    image: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=800&h=800&fit=crop',
     images: [
-      'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=800',
-      'https://images.unsplash.com/photo-1602874801006-95ad9f5fe4ce?w=800',
+      'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=800&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1602874801006-95ad9f5fe4ce?w=800&h=800&fit=crop',
     ],
     description: 'Calming lavender aromatherapy candle designed to promote relaxation and peaceful sleep.',
     features: [
@@ -54,10 +54,10 @@ export const products = [
     discount: 38,
     rating: 5,
     reviews: 32,
-    image: 'https://images.unsplash.com/photo-1615738302067-c1e5a8c1f138?w=800',
+    image: 'https://images.unsplash.com/photo-1615738302067-c1e5a8c1f138?w=800&h=800&fit=crop',
     images: [
-      'https://images.unsplash.com/photo-1615738302067-c1e5a8c1f138?w=800',
-      'https://images.unsplash.com/photo-1602874801006-95ad9f5fe4ce?w=800',
+      'https://images.unsplash.com/photo-1615738302067-c1e5a8c1f138?w=800&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1602874801006-95ad9f5fe4ce?w=800&h=800&fit=crop',
     ],
     description: 'Elegant gift set featuring three premium rose-scented candles in a beautiful presentation box.',
     features: [
@@ -77,10 +77,10 @@ export const products = [
     discount: 31,
     rating: 4,
     reviews: 12,
-    image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800',
+    image: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800&h=800&fit=crop',
     images: [
-      'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800',
-      'https://images.unsplash.com/photo-1602874801006-95ad9f5fe4ce?w=800',
+      'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=800&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1602874801006-95ad9f5fe4ce?w=800&h=800&fit=crop',
     ],
     description: 'A test candle product for checkout and product page testing. Features premium quality with natural ingredients.',
     features: [

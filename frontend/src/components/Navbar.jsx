@@ -29,13 +29,8 @@ const Navbar = () => {
               <Menu size={28} strokeWidth={1.5} />
             </button>
 
-            {/* Logo - Center */}
-            <Link to="/" className="absolute left-1/2 transform -translate-x-1/2 flex items-center">
-              <div className="text-3xl md:text-4xl font-black tracking-tight">
-                <span className="text-black">SENT</span>
-                <span className="bg-black text-white px-2 rounded-sm ml-1">BY HER</span>
-              </div>
-            </Link>
+            {/* Empty center space */}
+            <div></div>
 
             {/* Right Icons */}
             <div className="flex items-center space-x-4 md:space-x-6">

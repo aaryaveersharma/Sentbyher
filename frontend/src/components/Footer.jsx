@@ -28,8 +28,7 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <div className="text-2xl font-black tracking-tight mb-4">
-              <span className="text-black">SENT</span>
-              <span className="bg-black text-white px-2 rounded-sm ml-1">BY HER</span>
+              Luxury Candles
             </div>
             <p className="text-sm text-gray-600">© 2025 Sent By Her, Powered by Luxury.</p>
           </div>
