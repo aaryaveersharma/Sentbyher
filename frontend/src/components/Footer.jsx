@@ -1,27 +1,8 @@
 import React from 'react';
-import { Instagram, Youtube, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   return (
     <footer className="bg-white border-t border-gray-200 mt-16">
-      {/* Partner Ticker */}
-      <div className="bg-black text-white py-4 overflow-hidden">
-        <div className="animate-scroll whitespace-nowrap">
-          <span className="inline-block mx-8">Partner One</span>
-          <span className="inline-block mx-8">Partner Two</span>
-          <span className="inline-block mx-8">Partner Three</span>
-          <span className="inline-block mx-8">Partner Four</span>
-          <span className="inline-block mx-8">Partner Five</span>
-          <span className="inline-block mx-8">Partner Six</span>
-          <span className="inline-block mx-8">Partner One</span>
-          <span className="inline-block mx-8">Partner Two</span>
-          <span className="inline-block mx-8">Partner Three</span>
-          <span className="inline-block mx-8">Partner Four</span>
-          <span className="inline-block mx-8">Partner Five</span>
-          <span className="inline-block mx-8">Partner Six</span>
-        </div>
-      </div>
-
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -57,27 +38,6 @@ const Footer = () => {
               <li><a href="#" className="hover:text-black transition-colors">Collaborations</a></li>
               <li><a href="#" className="hover:text-black transition-colors">Blogs</a></li>
             </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Bar */}
-      <div className="bg-black text-white py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
-          <div className="text-sm uppercase tracking-wider mb-4 md:mb-0">Connect</div>
-          <div className="flex space-x-6">
-            <a href="#" className="hover:text-gray-300 transition-colors uppercase text-sm">
-              <Instagram size={20} className="inline mr-2" />
-              Instagram
-            </a>
-            <a href="#" className="hover:text-gray-300 transition-colors uppercase text-sm">
-              <Youtube size={20} className="inline mr-2" />
-              Youtube
-            </a>
-            <a href="#" className="hover:text-gray-300 transition-colors uppercase text-sm">
-              <Linkedin size={20} className="inline mr-2" />
-              LinkedIn
-            </a>
           </div>
         </div>
       </div>
