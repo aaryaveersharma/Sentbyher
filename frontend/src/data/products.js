@@ -1,28 +1,5 @@
 export const products = [
   {
-    id: 1,
-    name: 'Vanilla Luxe Candle',
-    category: 'Scented Candles',
-    price: 1299,
-    originalPrice: 1999,
-    discount: 35,
-    rating: 5,
-    reviews: 24,
-    image: 'https://images.unsplash.com/photo-1602874801006-95ad9f5fe4ce?w=800&h=800&fit=crop',
-    images: [
-      'https://images.unsplash.com/photo-1602874801006-95ad9f5fe4ce?w=800&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=800&h=800&fit=crop',
-    ],
-    description: 'Premium vanilla scented candle with natural soy wax. Hand-poured with essential oils for a luxurious aromatherapy experience.',
-    features: [
-      '100% Natural Soy Wax',
-      'Essential Oil Blend',
-      'Burn Time: 40+ hours',
-      'Hand-poured in small batches',
-    ],
-    inStock: true,
-  },
-  {
     id: 2,
     name: 'Lavender Dreams Candle',
     category: 'Aromatherapy',
