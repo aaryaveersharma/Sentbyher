@@ -32,11 +32,11 @@ const CollectionBox = () => {
             </div>
 
             {/* Image Section */}
-            <div className="relative h-64 md:h-full flex items-center justify-center p-8">
+            <div className="relative h-64 md:h-full flex items-center justify-center p-8 bg-white">
               <img
-                src="https://images.unsplash.com/photo-1602874801006-95ad9f5fe4ce?w=600&h=600&fit=crop"
-                alt="Luxury Candle"
-                className="w-full max-w-sm h-auto object-contain group-hover:scale-110 transition-transform duration-700"
+                src="https://customer-assets.emergentagent.com/job_premium-candles-4/artifacts/m1mipi9e_images%20%281%29%20%282%29.png"
+                alt="Luxury Candle Collection"
+                className="w-full max-w-md h-auto object-contain group-hover:scale-110 transition-transform duration-700"
               />
             </div>
           </div>
