@@ -21,10 +21,10 @@ const HeroSection = () => {
           onDragStart={(e) => e.preventDefault()}
         />
         
-        {/* White text overlay - Centered */}
+        {/* Text overlay - Centered */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
           <img
-            src="https://customer-assets.emergentagent.com/job_premium-candles-4/artifacts/exdzvwr1_file_00000000c93871fa8f8f65a260ab15ec.png"
+            src="https://customer-assets.emergentagent.com/job_premium-candles-4/artifacts/6fd94oeg_file_00000000013471fa99245632a71ca792.png"
             alt=""
             draggable="false"
             className="w-3/4 md:w-2/3 lg:w-1/2 h-auto object-contain pointer-events-none select-none"

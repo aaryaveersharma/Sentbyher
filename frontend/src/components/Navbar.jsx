@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ShoppingCart, Menu, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
@@ -6,15 +6,45 @@ import { useCart } from '../context/CartContext';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [currentText, setCurrentText] = useState(0);
   const { cart } = useCart();
+
+  const bannerTexts = [
+    'LUXURY CANDLES BY SENT BY HER',
+    'HANDCRAFTED WITH NATURAL INGREDIENTS',
+    'FREE SHIPPING ON ORDERS OVER ₹1999',
+    'PREMIUM FRAGRANCE COLLECTION'
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentText((prev) => (prev + 1) % bannerTexts.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const cartItemsCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <>
-      {/* Top Banner */}
-      <div className="bg-black text-white text-center py-2 text-sm font-medium tracking-widest uppercase">
-        LUXURY CANDLES BY SENT BY HER
+      {/* Top Banner with Flipping Text */}
+      <div className="bg-black text-white text-center py-2 overflow-hidden relative h-8">
+        <div className="absolute inset-0 flex items-center justify-center">
+          {bannerTexts.map((text, index) => (
+            <div
+              key={index}
+              className={`absolute text-sm font-medium tracking-widest uppercase transition-all duration-500 ${
+                index === currentText
+                  ? 'opacity-100 translate-y-0'
+                  : index === (currentText - 1 + bannerTexts.length) % bannerTexts.length
+                  ? 'opacity-0 -translate-y-full'
+                  : 'opacity-0 translate-y-full'
+              }`}
+            >
+              {text}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Main Navbar */}

@@ -20,12 +20,6 @@ const FeaturedProducts = () => {
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold mb-6">Featured Products</h2>
-        <div className="flex justify-center space-x-6 text-sm font-medium">
-          <button className="border-b-2 border-black pb-2">CANDLE COLLECTION</button>
-          <button className="text-gray-500 hover:text-black pb-2 transition-colors duration-200">
-            NEW COLLECTION
-          </button>
-        </div>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
