@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
-import CategoryCards from '../components/CategoryCards';
+import CollectionBox from '../components/CollectionBox';
 import FeaturedProducts from '../components/FeaturedProducts';
 import Footer from '../components/Footer';
 
@@ -10,7 +10,7 @@ const Home = () => {
     <div>
       <Navbar />
       <HeroSection />
-      <CategoryCards />
+      <CollectionBox />
       <FeaturedProducts />
       <Footer />
     </div>
