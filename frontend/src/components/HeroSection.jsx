@@ -1,11 +1,12 @@
 import React from 'react';
+import heroImage from '../assets/hero-image.png';
 
 const HeroSection = () => {
   return (
     <section className="w-full">
       <div className="w-full">
         <img
-          src="https://customer-assets.emergentagent.com/job_premium-candles-4/artifacts/2n8d2yvl_IMG_20260331_123257.png"
+          src={heroImage}
           alt="Sent By Her Premium Candles"
           className="w-full h-auto object-cover pointer-events-none select-none"
           draggable="false"
