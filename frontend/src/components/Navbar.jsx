@@ -21,7 +21,7 @@ const Navbar = () => {
       setCurrentText((prev) => (prev + 1) % bannerTexts.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [bannerTexts.length]);
 
   const cartItemsCount = cart.reduce((total, item) => total + item.quantity, 0);
 
