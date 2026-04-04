@@ -9,9 +9,9 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <div className="text-2xl font-black tracking-tight mb-4">
-              Luxury Candles
+              Sent By Her.
             </div>
-            <p className="text-sm text-gray-600">© 2025 Sent By Her, Powered by Luxury.</p>
+            <p className="text-sm text-gray-600">© 2025 sent by her, All rights reserved</p>
           </div>
 
           {/* Help Links */}
