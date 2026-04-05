@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import collectionImage from '../assets/collection-image.png';
 
 const CollectionBox = () => {
   return (
@@ -20,7 +21,7 @@ const CollectionBox = () => {
             {/* Image Section */}
             <div className="flex items-center justify-center">
               <img
-                src="https://customer-assets.emergentagent.com/job_premium-candles-4/artifacts/m1mipi9e_images%20%281%29%20%282%29.png"
+                src={collectionImage}
                 alt="Candles"
                 className="w-full h-auto object-contain group-hover:scale-110 transition-transform duration-700"
               />
