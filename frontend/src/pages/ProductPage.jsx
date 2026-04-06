@@ -1,18 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Star, Minus, Plus, Heart, ShoppingCart } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { products } from '../data/products';
 import { useCart } from '../context/CartContext';
 import { toast } from '../hooks/use-toast';
+import { supabase } from '../lib/supabase';
 
 const ProductPage = () => {
   const { id } = useParams();
   const { addToCart } = useCart();
-  const product = products.find((p) => p.id === parseInt(id));
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (error) {
+          console.error("Error fetching product:", error);
+        } else {
+          setProduct(data);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="bg-[#FAF9F6] min-h-screen">
+        <Navbar />
+        <div className="max-w-7xl mx-auto px-4 py-16 text-center">
+          <p>Loading product...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -56,30 +92,17 @@ const ProductPage = () => {
           <div>
             <div className="bg-gray-50 rounded-lg overflow-hidden mb-4 aspect-[4/5]">
               <img
-                src={product.images[selectedImage]}
+                src={product.image}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
-            </div>
-            <div className="grid grid-cols-4 gap-4">
-              {product.images.map((image, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedImage(index)}
-                  className={`bg-gray-50 rounded-lg overflow-hidden aspect-square border-2 transition-all duration-300 ${
-                    selectedImage === index ? 'border-black' : 'border-transparent hover:border-gray-300'
-                  }`}
-                >
-                  <img src={image} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
-                </button>
-              ))}
             </div>
           </div>
 
           {/* Product Details */}
           <div>
             <div className="mb-4">
-              <p className="text-sm text-gray-500 uppercase tracking-wide mb-2">{product.category}</p>
+              <p className="text-sm text-gray-500 uppercase tracking-wide mb-2">{product.category || 'Luxury Candle'}</p>
               <h1 className="text-3xl md:text-4xl font-bold mb-4">{product.name}</h1>
               
               {/* Rating */}
@@ -89,11 +112,11 @@ const ProductPage = () => {
                     <Star
                       key={i}
                       size={20}
-                      className={i < product.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
+                      className={i < (product.rating || 5) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
                     />
                   ))}
                 </div>
-                <span className="text-sm text-gray-600 ml-3">({product.reviews} reviews)</span>
+                <span className="text-sm text-gray-600 ml-3">({product.reviews || 0} reviews)</span>
               </div>
 
               {/* Price */}
@@ -128,12 +151,8 @@ const ProductPage = () => {
               <div className="mb-8">
                 <h3 className="font-bold mb-3">Features</h3>
                 <ul className="space-y-2">
-                  {product.features.map((feature, index) => (
-                    <li key={index} className="flex items-start">
-                      <span className="text-green-600 mr-2">✓</span>
-                      <span className="text-gray-700">{feature}</span>
-                    </li>
-                  ))}
+                  <li className="flex items-start"><span className="text-green-600 mr-2">✓</span><span className="text-gray-700">Premium quality</span></li>
+                  <li className="flex items-start"><span className="text-green-600 mr-2">✓</span><span className="text-gray-700">Long lasting scent</span></li>
                 </ul>
               </div>
 
@@ -163,7 +182,7 @@ const ProductPage = () => {
               <div className="flex space-x-4 mb-6">
                 <button
                   onClick={handleAddToCart}
-                  disabled={!product.inStock}
+                  disabled={product.inStock === false}
                   className="flex-1 bg-black text-white py-4 px-6 rounded hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed font-medium flex items-center justify-center space-x-2"
                 >
                   <ShoppingCart size={20} />

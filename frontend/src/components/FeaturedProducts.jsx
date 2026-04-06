@@ -1,12 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { products } from '../data/products';
 import { useCart } from '../context/CartContext';
 import { toast } from '../hooks/use-toast';
+import { supabase } from '../lib/supabase';
 
 const FeaturedProducts = () => {
   const { addToCart } = useCart();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          if (error.code !== '42P01') console.error('Error fetching products:', error);
+        } else {
+          setProducts(data || []);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleAddToCart = (product) => {
     addToCart(product);
@@ -22,6 +47,11 @@ const FeaturedProducts = () => {
         <h2 className="text-3xl md:text-4xl font-bold mb-6">Featured Products</h2>
       </div>
 
+      {loading ? (
+        <p className="text-center">Loading products...</p>
+      ) : products.length === 0 ? (
+        <p className="text-center text-gray-500">No products available at the moment.</p>
+      ) : (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
         {products.map((product) => (
           <div
@@ -82,6 +112,7 @@ const FeaturedProducts = () => {
           </div>
         ))}
       </div>
+      )}
     </section>
   );
 };

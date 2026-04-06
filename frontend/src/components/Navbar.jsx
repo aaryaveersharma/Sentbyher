@@ -127,9 +127,13 @@ const Navbar = () => {
                   >
                     Products
                   </Link>
-                  <a href="#" className="block text-lg font-medium hover:text-gray-600 transition-colors">
-                    Collections
-                  </a>
+                  <Link
+                    to="/my-orders"
+                    className="block text-lg font-medium hover:text-gray-600 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    My Orders
+                  </Link>
                   <a href="#" className="block text-lg font-medium hover:text-gray-600 transition-colors">
                     About Us
                   </a>
@@ -137,9 +141,9 @@ const Navbar = () => {
                     Contact
                   </a>
                   <div className="pt-6 border-t border-gray-200">
-                    <a href="#" className="block text-sm text-gray-600 hover:text-black transition-colors">
+                    <Link to="/login" className="block text-sm text-gray-600 hover:text-black transition-colors" onClick={() => setIsMenuOpen(false)}>
                       Login / Register
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
