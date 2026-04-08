@@ -27,9 +27,8 @@ const Register = () => {
         throw error;
       }
 
-      setSuccess(true);
-      // Wait a moment then redirect to login or home
-      setTimeout(() => navigate('/login'), 2000);
+      // Redirect to home instantly
+      navigate('/');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -44,7 +43,6 @@ const Register = () => {
         <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
           <h2 className="text-2xl font-serif text-center mb-6">Create Account</h2>
           {error && <div className="mb-4 text-red-500 text-sm text-center">{error}</div>}
-          {success && <div className="mb-4 text-green-600 text-sm text-center">Registration successful! Redirecting to login...</div>}
           <form onSubmit={handleRegister} className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1" htmlFor="email">Email</label>

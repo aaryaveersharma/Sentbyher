@@ -21,7 +21,7 @@ const ProductPage = () => {
         const { data, error } = await supabase
           .from('products')
           .select('*')
-          .eq('id', id)
+          .eq('id', parseInt(id, 10))
           .single();
 
         if (error) {

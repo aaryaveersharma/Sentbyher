@@ -34,7 +34,7 @@ const Login = () => {
         throw error;
       }
 
-      navigate('/'); // Redirect to home after normal login
+      navigate('/my-orders'); // Redirect to my-orders instantly after normal login
     } catch (err) {
       setError(err.message);
     } finally {
