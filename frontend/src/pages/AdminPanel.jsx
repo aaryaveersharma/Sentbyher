@@ -178,12 +178,22 @@ const AdminPanel = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Image URL</label>
+                <label className="block text-sm font-medium mb-1">Upload Image</label>
                 <input
-                  type="url" required value={productImage} onChange={(e) => setProductImage(e.target.value)}
-                  placeholder="https://example.com/image.jpg"
+                  type="file" required accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setProductImage(reader.result);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
                   className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-1 focus:ring-black"
                 />
+                {productImage && <img src={productImage} alt="Preview" className="mt-2 h-20 object-cover rounded" />}
               </div>
               <button
                 type="submit" disabled={productAdding}

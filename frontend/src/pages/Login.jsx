@@ -51,7 +51,7 @@ const Login = () => {
           {error && <div className="mb-4 text-red-500 text-sm text-center">{error}</div>}
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1" htmlFor="email">Email or 'admin'</label>
+              <label className="block text-sm font-medium mb-1" htmlFor="email">Email</label>
               <input
                 id="email"
                 type="text"
