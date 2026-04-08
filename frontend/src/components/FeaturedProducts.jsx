@@ -44,7 +44,7 @@ const FeaturedProducts = () => {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
       <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold mb-6">Featured Products</h2>
+        <h2 className="text-3xl md:text-4xl font-serif mb-6">Featured Products</h2>
       </div>
 
       {loading ? (
@@ -74,7 +74,7 @@ const FeaturedProducts = () => {
             <div className="p-4 flex flex-col flex-1">
               <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">{product.category}</p>
               <Link to={`/product/${product.id}`}>
-                <h3 className="text-lg font-bold mb-2 group-hover:text-gray-700 transition-colors duration-300 min-h-[56px]">
+                <h3 className="text-lg font-serif mb-2 group-hover:text-gray-700 transition-colors duration-300 min-h-[56px]">
                   {product.name}
                 </h3>
               </Link>

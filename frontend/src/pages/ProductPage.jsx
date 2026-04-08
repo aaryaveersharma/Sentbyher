@@ -103,7 +103,7 @@ const ProductPage = () => {
           <div>
             <div className="mb-4">
               <p className="text-sm text-gray-500 uppercase tracking-wide mb-2">{product.category || 'Luxury Candle'}</p>
-              <h1 className="text-3xl md:text-4xl font-bold mb-4">{product.name}</h1>
+              <h1 className="text-3xl md:text-4xl font-serif mb-4">{product.name}</h1>
               
               {/* Rating */}
               <div className="flex items-center mb-6">
@@ -121,7 +121,7 @@ const ProductPage = () => {
 
               {/* Price */}
               <div className="flex items-center space-x-3 mb-6">
-                <span className="text-3xl font-bold">₹{product.price}</span>
+                <span className="text-3xl font-serif">₹{product.price}</span>
                 {product.originalPrice && (
                   <>
                     <span className="text-xl text-gray-400 line-through">₹{product.originalPrice}</span>

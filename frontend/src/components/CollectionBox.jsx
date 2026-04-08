@@ -13,7 +13,7 @@ const CollectionBox = () => {
               <p className="text-xs md:text-sm text-gray-400 mb-2 font-light tracking-wide">
                 Explore Our Range
               </p>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-light leading-tight group-hover:text-gray-700 transition-colors duration-300" style={{ fontFamily: 'Inter, -apple-system, sans-serif', fontWeight: '300' }}>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl leading-tight group-hover:text-gray-700 transition-colors duration-300 font-serif">
                 View our full<br />collection
               </h2>
             </div>

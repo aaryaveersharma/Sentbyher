@@ -59,8 +59,13 @@ const Navbar = () => {
               <Menu size={28} strokeWidth={1.5} />
             </button>
 
-            {/* Empty center space */}
-            <div></div>
+            {/* Desktop Center Links */}
+            <div className="hidden md:flex space-x-8">
+              <Link to="/" className="text-gray-800 hover:text-black font-medium transition-colors">Home</Link>
+              <Link to="/products" className="text-gray-800 hover:text-black font-medium transition-colors">Products</Link>
+              <Link to="/my-orders" className="text-gray-800 hover:text-black font-medium transition-colors">My Orders</Link>
+              <Link to="/login" className="text-gray-800 hover:text-black font-medium transition-colors">Login/Register</Link>
+            </div>
 
             {/* Right Icons */}
             <div className="flex items-center space-x-4 md:space-x-6">

@@ -18,9 +18,34 @@ const MyOrders = () => {
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    if (user) {
-      fetchOrders();
-    }
+    if (!user) return;
+
+    fetchOrders();
+
+    // Subscribe to real-time updates for orders
+    const channel = supabase
+      .channel('public:orders')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'orders',
+          filter: `user_email=eq.${user.email}`,
+        },
+        (payload) => {
+          setOrders((currentOrders) =>
+            currentOrders.map((order) =>
+              order.id === payload.new.id ? payload.new : order
+            )
+          );
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   const fetchOrders = async () => {

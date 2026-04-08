@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div>
-            <div className="text-2xl font-black tracking-tight mb-4">
+            <div className="text-2xl font-serif tracking-tight mb-4">
               Sent By Her.
             </div>
             <p className="text-sm text-gray-600">© 2025 sent by her, All rights reserved</p>

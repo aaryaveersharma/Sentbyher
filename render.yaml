@@ -13,7 +13,8 @@ services:
   - type: web
     name: frontend
     env: static
-    buildCommand: "cd frontend && yarn install && yarn build"
+    # Install with production=false to ensure devDependencies like @craco/craco are installed before building
+    buildCommand: "cd frontend && yarn install --production=false && yarn build"
     staticPublishPath: "./frontend/build"
     envVars:
       - key: NODE_ENV
