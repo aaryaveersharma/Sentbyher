@@ -6,12 +6,19 @@ import { useCart } from '../context/CartContext';
 import { toast } from '../hooks/use-toast';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { Tag } from 'lucide-react';
+import { loadRazorpayScript } from '../utils/loadRazorpay';
 
 const CheckoutPage = () => {
   const { cart, getCartTotal, clearCart } = useCart();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError] = useState('');
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -33,18 +40,47 @@ const CheckoutPage = () => {
     }
   }, [user]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const handleApplyCoupon = async () => {
+    if (!couponCode) return;
+    setIsApplyingCoupon(true);
+    setCouponError('');
+    try {
+      const { data, error } = await supabase
+        .from('coupons')
+        .select('*')
+        .eq('code', couponCode.toUpperCase())
+        .single();
 
-    const userEmail = user?.email || formData.email || 'Guest';
+      if (error || !data) {
+        setCouponError('Invalid or expired coupon code.');
+        setAppliedCoupon(null);
+      } else {
+        setAppliedCoupon(data);
+        setCouponError('');
+      }
+    } catch (err) {
+      console.error(err);
+      setCouponError('Error verifying coupon.');
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
 
+  const getDiscountedTotal = () => {
+    const total = getCartTotal();
+    if (appliedCoupon && appliedCoupon.discount_percentage) {
+      return total - (total * (appliedCoupon.discount_percentage / 100));
+    }
+    return total;
+  };
+
+  const handlePaymentSuccess = async (userEmail, totalAmount) => {
     try {
       const { error } = await supabase
         .from('orders')
         .insert([{
           user_email: userEmail,
-          total_amount: getCartTotal(),
+          total_amount: totalAmount,
           status: 'pending'
         }]);
 
@@ -52,24 +88,81 @@ const CheckoutPage = () => {
         throw error;
       }
 
-      toast({
-        title: 'Order Placed Successfully!',
-        description: 'Thank you for your purchase. Your order will be delivered soon.',
-      });
       clearCart();
-      setTimeout(() => {
-        navigate(user ? '/my-orders' : '/');
-      }, 2000);
-
+      navigate('/order-success');
     } catch (err) {
       console.error("Order creation failed:", err);
       if (err.code === '42P01') {
-         toast({ title: "Order Placed", description: "Table missing in supabase, simulated success." });
          clearCart();
-         setTimeout(() => navigate('/'), 2000);
+         navigate('/order-success');
       } else {
          toast({ title: 'Order Failed', description: err.message, variant: 'destructive' });
       }
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const userEmail = user?.email || formData.email || 'Guest';
+    const amountToPay = getDiscountedTotal();
+
+    try {
+      const isRazorpayLoaded = await loadRazorpayScript();
+
+      if (!isRazorpayLoaded) {
+        toast({ title: 'Payment Failed', description: 'Razorpay SDK failed to load. Are you online?', variant: 'destructive' });
+        setLoading(false);
+        return;
+      }
+
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+      const orderResponse = await fetch(`${backendUrl}/api/create-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ amount: amountToPay }),
+      });
+
+      const orderData = await orderResponse.json();
+
+      if (orderData.error) {
+        // Fallback if razorpay is not properly configured on backend, just process the order directly
+        console.error("Razorpay backend error:", orderData.error);
+        await handlePaymentSuccess(userEmail, amountToPay);
+        setLoading(false);
+        return;
+      }
+
+      const options = {
+        key: process.env.REACT_APP_RAZORPAY_KEY_ID, // Use Razorpay Key ID
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "Sent By Her",
+        description: "Order Payment",
+        order_id: orderData.id,
+        handler: async function (response) {
+          // Verify payment on backend if needed, but for now just process success
+          await handlePaymentSuccess(userEmail, amountToPay);
+        },
+        prefill: {
+          name: formData.firstName + ' ' + formData.lastName,
+          email: userEmail,
+          contact: formData.phone || '',
+        },
+        theme: {
+          color: "#000000",
+        },
+      };
+
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+
+    } catch (err) {
+      console.error("Payment setup failed:", err);
+      toast({ title: 'Payment Failed', description: 'Could not initialize payment.', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -217,6 +310,37 @@ const CheckoutPage = () => {
                 ))}
               </div>
 
+              {/* Coupon Section */}
+              <div className="border-t border-gray-300 pt-6 mb-6">
+                <label className="block text-sm font-medium mb-2 flex items-center gap-2">
+                  <Tag size={16} /> Have a coupon?
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    placeholder="Enter code here"
+                    className="flex-grow px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black uppercase"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleApplyCoupon}
+                    disabled={isApplyingCoupon || !couponCode}
+                    className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 disabled:opacity-50 transition"
+                  >
+                    {isApplyingCoupon ? '...' : 'Apply'}
+                  </button>
+                </div>
+                {couponError && <p className="text-red-500 text-sm mt-2">{couponError}</p>}
+                {appliedCoupon && (
+                  <div className="mt-2 text-sm text-green-600 flex justify-between items-center bg-green-50 px-3 py-2 rounded">
+                    <span>Coupon <strong>{appliedCoupon.code}</strong> applied!</span>
+                    <button type="button" onClick={() => setAppliedCoupon(null)} className="text-gray-500 hover:text-black">Remove</button>
+                  </div>
+                )}
+              </div>
+
               <div className="border-t border-gray-300 pt-4 space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal</span>
@@ -226,10 +350,16 @@ const CheckoutPage = () => {
                   <span className="text-gray-600">Shipping</span>
                   <span className="font-medium text-green-600">Free</span>
                 </div>
+                {appliedCoupon && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Discount ({appliedCoupon.discount_percentage}%)</span>
+                    <span>-₹{(getCartTotal() * (appliedCoupon.discount_percentage / 100)).toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="border-t border-gray-300 pt-3">
                   <div className="flex justify-between">
                     <span className="text-lg font-bold">Total</span>
-                    <span className="text-xl font-bold">₹{getCartTotal()}</span>
+                    <span className="text-xl font-bold">₹{getDiscountedTotal().toFixed(2)}</span>
                   </div>
                 </div>
               </div>

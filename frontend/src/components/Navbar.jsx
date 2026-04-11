@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, Menu, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [currentText, setCurrentText] = useState(0);
   const { cart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const bannerTexts = [
     'LUXURY CANDLES BY SENT BY HER',
@@ -64,7 +68,19 @@ const Navbar = () => {
               <Link to="/" className="text-gray-800 hover:text-black font-medium transition-colors">Home</Link>
               <Link to="/products" className="text-gray-800 hover:text-black font-medium transition-colors">Products</Link>
               <Link to="/my-orders" className="text-gray-800 hover:text-black font-medium transition-colors">My Orders</Link>
-              <Link to="/login" className="text-gray-800 hover:text-black font-medium transition-colors">Login/Register</Link>
+              {user ? (
+                <button
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    navigate('/');
+                  }}
+                  className="text-gray-800 hover:text-black font-medium transition-colors"
+                >
+                  Log out
+                </button>
+              ) : (
+                <Link to="/login" className="text-gray-800 hover:text-black font-medium transition-colors">Login/Register</Link>
+              )}
             </div>
 
             {/* Right Icons */}
@@ -139,16 +155,23 @@ const Navbar = () => {
                   >
                     My Orders
                   </Link>
-                  <a href="#" className="block text-lg font-medium hover:text-gray-600 transition-colors">
-                    About Us
-                  </a>
-                  <a href="#" className="block text-lg font-medium hover:text-gray-600 transition-colors">
-                    Contact
-                  </a>
                   <div className="pt-6 border-t border-gray-200">
-                    <Link to="/login" className="block text-sm text-gray-600 hover:text-black transition-colors" onClick={() => setIsMenuOpen(false)}>
-                      Login / Register
-                    </Link>
+                    {user ? (
+                      <button
+                        onClick={async () => {
+                          setIsMenuOpen(false);
+                          await supabase.auth.signOut();
+                          navigate('/');
+                        }}
+                        className="block text-sm text-gray-600 hover:text-black transition-colors text-left"
+                      >
+                        Log out
+                      </button>
+                    ) : (
+                      <Link to="/login" className="block text-sm text-gray-600 hover:text-black transition-colors" onClick={() => setIsMenuOpen(false)}>
+                        Login / Register
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>

@@ -4,6 +4,7 @@ import './App.css';
 import Home from './pages/Home';
 import ProductsPage from './pages/ProductsPage';
 import ProductPage from './pages/ProductPage';
+import OrderSuccess from './pages/OrderSuccess';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import Login from './pages/Login';
@@ -21,6 +22,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:id" element={<ProductPage />} />
+            <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/login" element={<Login />} />

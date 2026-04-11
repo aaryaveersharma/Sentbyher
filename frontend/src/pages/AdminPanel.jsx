@@ -20,6 +20,12 @@ const AdminPanel = () => {
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
 
+  // Coupons State
+  const [coupons, setCoupons] = useState([]);
+  const [couponCode, setCouponCode] = useState('');
+  const [couponDiscount, setCouponDiscount] = useState('');
+  const [couponAdding, setCouponAdding] = useState(false);
+
   // Check admin auth
   useEffect(() => {
     const isAdmin = localStorage.getItem('isAdmin');
@@ -31,6 +37,9 @@ const AdminPanel = () => {
   useEffect(() => {
     if (activeTab === 'orders') {
       fetchOrders();
+    }
+    if (activeTab === 'coupons') {
+      fetchCoupons();
     }
   }, [activeTab]);
 
@@ -57,6 +66,53 @@ const AdminPanel = () => {
       console.error(err);
     } finally {
       setOrdersLoading(false);
+    }
+  };
+
+  const fetchCoupons = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('coupons')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error && error.code !== '42P01') {
+        console.error("Error fetching coupons:", error);
+      } else {
+        setCoupons(data || []);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleAddCoupon = async (e) => {
+    e.preventDefault();
+    setCouponAdding(true);
+    try {
+      const { error } = await supabase
+        .from('coupons')
+        .insert([{ code: couponCode.toUpperCase(), discount_percentage: parseFloat(couponDiscount) }]);
+
+      if (error) throw error;
+
+      setCouponCode('');
+      setCouponDiscount('');
+      fetchCoupons();
+    } catch (err) {
+      console.error("Error adding coupon:", err);
+      alert(err.code === '42P01' ? "Coupons table missing in Supabase." : err.message);
+    } finally {
+      setCouponAdding(false);
+    }
+  };
+
+  const handleDeleteCoupon = async (id) => {
+    try {
+      const { error } = await supabase.from('coupons').delete().eq('id', id);
+      if (error) throw error;
+      setCoupons(coupons.filter(c => c.id !== id));
+    } catch (err) {
+      console.error("Error deleting coupon:", err);
     }
   };
 
@@ -145,6 +201,12 @@ const AdminPanel = () => {
           >
             Manage Orders
           </button>
+          <button
+            className={`px-4 py-2 ${activeTab === 'coupons' ? 'border-b-2 border-black font-semibold' : 'text-gray-500'}`}
+            onClick={() => setActiveTab('coupons')}
+          >
+            Manage Coupons
+          </button>
         </div>
 
         {activeTab === 'products' && (
@@ -202,6 +264,59 @@ const AdminPanel = () => {
                 {productAdding ? 'Adding...' : 'Add Product'}
               </button>
             </form>
+          </div>
+        )}
+
+        {activeTab === 'coupons' && (
+          <div className="bg-white p-6 rounded shadow-sm max-w-2xl">
+            <h2 className="text-xl font-serif mb-4">Add New Coupon</h2>
+            <form onSubmit={handleAddCoupon} className="space-y-4 mb-8">
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium mb-1">Coupon Code</label>
+                  <input
+                    type="text" required value={couponCode} onChange={(e) => setCouponCode(e.target.value)}
+                    placeholder="e.g. SUMMER10"
+                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-1 focus:ring-black uppercase"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium mb-1">Discount (%)</label>
+                  <input
+                    type="number" step="0.1" max="100" min="0" required value={couponDiscount} onChange={(e) => setCouponDiscount(e.target.value)}
+                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-1 focus:ring-black"
+                  />
+                </div>
+              </div>
+              <button
+                type="submit" disabled={couponAdding}
+                className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 disabled:opacity-50"
+              >
+                {couponAdding ? 'Adding...' : 'Add Coupon'}
+              </button>
+            </form>
+
+            <h3 className="text-lg font-serif mb-4 border-t pt-6">Existing Coupons</h3>
+            {coupons.length === 0 ? (
+              <p className="text-gray-500 text-sm">No coupons added yet.</p>
+            ) : (
+              <div className="space-y-2">
+                {coupons.map(coupon => (
+                  <div key={coupon.id} className="flex justify-between items-center bg-gray-50 p-3 rounded border">
+                    <div>
+                      <p className="font-mono font-bold">{coupon.code}</p>
+                      <p className="text-sm text-gray-500">{coupon.discount_percentage}% off</p>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteCoupon(coupon.id)}
+                      className="text-red-500 text-sm hover:underline"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

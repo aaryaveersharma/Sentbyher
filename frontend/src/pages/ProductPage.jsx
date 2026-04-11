@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Star, Minus, Plus, Heart, ShoppingCart } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -9,6 +9,7 @@ import { supabase } from '../lib/supabase';
 
 const ProductPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -71,6 +72,7 @@ const ProductPage = () => {
       title: 'Added to cart',
       description: `${quantity} x ${product.name} added to your cart.`,
     });
+    navigate('/checkout');
   };
 
   return (
@@ -186,7 +188,7 @@ const ProductPage = () => {
                   className="flex-1 bg-black text-white py-4 px-6 rounded hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed font-medium flex items-center justify-center space-x-2"
                 >
                   <ShoppingCart size={20} />
-                  <span>Add to Cart</span>
+                  <span>Buy Now</span>
                 </button>
                 <button className="border border-gray-300 p-4 rounded hover:border-black transition-colors">
                   <Heart size={20} />
