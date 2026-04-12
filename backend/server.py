@@ -86,6 +86,10 @@ async def create_razorpay_order(order_req: OrderCreateRequest):
         # Razorpay expects amount in paise
         order_amount = int(order_req.amount * 100)
 
+        # Ensure amount is valid (minimum 100 paise = 1 INR)
+        if order_amount < 100:
+             return {"error": "Amount must be at least 1 INR"}
+
         order_data = {
             "amount": order_amount,
             "currency": order_req.currency,
@@ -93,6 +97,8 @@ async def create_razorpay_order(order_req: OrderCreateRequest):
         }
 
         order = razorpay_client.order.create(data=order_data)
+        # Inject key_id so frontend doesn't need it as an env var if missing
+        order["key_id"] = razorpay_key_id
         return order
     except Exception as e:
         return {"error": str(e)}

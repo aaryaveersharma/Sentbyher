@@ -128,23 +128,32 @@ const CheckoutPage = () => {
 
       const orderData = await orderResponse.json();
 
-      if (orderData.error) {
-        // Fallback if razorpay is not properly configured on backend, just process the order directly
-        console.error("Razorpay backend error:", orderData.error);
-        await handlePaymentSuccess(userEmail, amountToPay);
+      if (!orderResponse.ok || orderData.error) {
+        console.error("Razorpay backend error:", orderData.error || orderData);
+        toast({ title: 'Payment Failed', description: orderData.error || 'Failed to create order. Please try again.', variant: 'destructive' });
+        setLoading(false);
+        return;
+      }
+
+      // The key is returned from the backend to ensure it's always available and correct
+      const razorpayKeyId = process.env.REACT_APP_RAZORPAY_KEY_ID || orderData.key_id;
+
+      if (!razorpayKeyId) {
+        console.error("Razorpay key is missing.");
+        toast({ title: 'Payment Error', description: 'Payment gateway configuration is missing.', variant: 'destructive' });
         setLoading(false);
         return;
       }
 
       const options = {
-        key: process.env.REACT_APP_RAZORPAY_KEY_ID, // Use Razorpay Key ID
+        key: razorpayKeyId,
         amount: orderData.amount,
         currency: orderData.currency,
         name: "Sent By Her",
         description: "Order Payment",
         order_id: orderData.id,
         handler: async function (response) {
-          // Verify payment on backend if needed, but for now just process success
+          // Process success
           await handlePaymentSuccess(userEmail, amountToPay);
         },
         prefill: {
@@ -158,13 +167,21 @@ const CheckoutPage = () => {
       };
 
       const paymentObject = new window.Razorpay(options);
+
+      paymentObject.on('payment.failed', function (response){
+         console.error("Payment failed event:", response.error);
+         toast({ title: 'Payment Failed', description: response.error.description || 'Payment was unsuccessful.', variant: 'destructive' });
+      });
+
       paymentObject.open();
 
     } catch (err) {
       console.error("Payment setup failed:", err);
-      toast({ title: 'Payment Failed', description: 'Could not initialize payment.', variant: 'destructive' });
+      toast({ title: 'Payment Failed', description: err.message || 'Could not initialise payment.', variant: 'destructive' });
     } finally {
-      setLoading(false);
+      // Don't set loading to false here, otherwise it removes the loading state while the Razorpay modal is open.
+      // Let the modal handle the UX flow.
+      // setLoading(false);
     }
   };
 
