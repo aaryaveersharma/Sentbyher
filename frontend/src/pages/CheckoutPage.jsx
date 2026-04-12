@@ -137,7 +137,16 @@ const CheckoutPage = () => {
         body: JSON.stringify({ amount: amountToPay }),
       });
 
-      const orderData = await orderResponse.json();
+      let orderData;
+      const textResponse = await orderResponse.text();
+      try {
+        orderData = textResponse ? JSON.parse(textResponse) : {};
+      } catch (e) {
+        console.error("Invalid JSON from backend:", textResponse);
+        toast({ title: 'Payment Failed', description: 'Server returned an invalid response.', variant: 'destructive' });
+        setLoading(false);
+        return;
+      }
 
       if (!orderResponse.ok || orderData.error) {
         console.error("Razorpay backend error:", orderData.error || orderData);

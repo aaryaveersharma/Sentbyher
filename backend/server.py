@@ -1,4 +1,5 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -74,13 +75,13 @@ class OrderCreateRequest(BaseModel):
 
 @api_router.post("/create-order")
 async def create_razorpay_order(order_req: OrderCreateRequest):
-    razorpay_key_id = os.environ.get('RAZORPAY_KEY_ID')
-    razorpay_key_secret = os.environ.get('RAZORPAY_KEY_SECRET')
-
-    if not razorpay_key_id or not razorpay_key_secret:
-        return {"error": "Razorpay credentials not configured"}
-
     try:
+        razorpay_key_id = os.environ.get('RAZORPAY_KEY_ID')
+        razorpay_key_secret = os.environ.get('RAZORPAY_KEY_SECRET')
+
+        if not razorpay_key_id or not razorpay_key_secret:
+            return JSONResponse(status_code=500, content={"error": "Razorpay credentials not configured"})
+
         razorpay_client = razorpay.Client(auth=(razorpay_key_id, razorpay_key_secret))
 
         # Razorpay expects amount in paise
@@ -88,7 +89,7 @@ async def create_razorpay_order(order_req: OrderCreateRequest):
 
         # Ensure amount is valid (minimum 100 paise = 1 INR)
         if order_amount < 100:
-             return {"error": "Amount must be at least 1 INR"}
+             return JSONResponse(status_code=400, content={"error": "Amount must be at least 1 INR"})
 
         order_data = {
             "amount": order_amount,
@@ -99,9 +100,9 @@ async def create_razorpay_order(order_req: OrderCreateRequest):
         order = razorpay_client.order.create(data=order_data)
         # Inject key_id so frontend doesn't need it as an env var if missing
         order["key_id"] = razorpay_key_id
-        return order
+        return JSONResponse(status_code=200, content=order)
     except Exception as e:
-        return {"error": str(e)}
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 # Include the router in the main app
 app.include_router(api_router)
