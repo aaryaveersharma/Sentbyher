@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { toast } from '../hooks/use-toast';
@@ -78,18 +77,6 @@ const FeaturedProducts = () => {
                   {product.name}
                 </h3>
               </Link>
-
-              {/* Rating */}
-              <div className="flex items-center mb-3">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    size={14}
-                    className={i < product.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
-                  />
-                ))}
-                <span className="text-xs text-gray-500 ml-2">({product.reviews})</span>
-              </div>
 
               {/* Price */}
               <div className="flex items-center space-x-2 mb-4">

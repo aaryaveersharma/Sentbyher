@@ -15,6 +15,9 @@ const ProductPage = () => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -38,6 +41,47 @@ const ProductPage = () => {
     };
     fetchProduct();
   }, [id]);
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmittingReview(true);
+    try {
+      // Calculate new rating
+      const newReviewsCount = (product.reviews || 0) + 1;
+      const currentTotalRating = (product.rating || 0) * (product.reviews || 0);
+      const newRating = Math.round((currentTotalRating + reviewRating) / newReviewsCount);
+
+      const { error } = await supabase
+        .from('products')
+        .update({ rating: newRating, reviews: newReviewsCount })
+        .eq('id', parseInt(id, 10));
+
+      if (error) throw error;
+
+      setProduct({ ...product, rating: newRating, reviews: newReviewsCount });
+      setReviewText('');
+      setReviewRating(5);
+      toast({
+        title: 'Review submitted!',
+        description: 'Thank you for your feedback.',
+      });
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      // Simulate success if no table
+      if (error.code === '42P01') {
+        const newReviewsCount = (product.reviews || 0) + 1;
+        const currentTotalRating = (product.rating || 0) * (product.reviews || 0);
+        const newRating = Math.round((currentTotalRating + reviewRating) / newReviewsCount);
+        setProduct({ ...product, rating: newRating, reviews: newReviewsCount });
+        setReviewText('');
+        toast({ title: 'Review submitted (Simulated)' });
+      } else {
+        toast({ title: 'Failed to submit review', description: error.message, variant: 'destructive' });
+      }
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -66,13 +110,8 @@ const ProductPage = () => {
     );
   }
 
-  const handleAddToCart = () => {
-    addToCart(product, quantity);
-    toast({
-      title: 'Added to cart',
-      description: `${quantity} x ${product.name} added to your cart.`,
-    });
-    navigate('/checkout');
+  const handleBuyNow = () => {
+    navigate('/checkout', { state: { directPurchase: { product, quantity } } });
   };
 
   return (
@@ -183,7 +222,7 @@ const ProductPage = () => {
               {/* Action Buttons */}
               <div className="flex space-x-4 mb-6">
                 <button
-                  onClick={handleAddToCart}
+                  onClick={handleBuyNow}
                   disabled={product.inStock === false}
                   className="flex-1 bg-black text-white py-4 px-6 rounded hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed font-medium flex items-center justify-center space-x-2"
                 >
@@ -203,6 +242,49 @@ const ProductPage = () => {
               </Link>
             </div>
           </div>
+        </div>
+
+        {/* Write a Review Section */}
+        <div className="mt-16 bg-white p-8 rounded-lg border border-gray-200">
+          <h2 className="text-2xl font-serif mb-6">Write a Review</h2>
+          <form onSubmit={handleReviewSubmit}>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">Rating</label>
+              <div className="flex items-center space-x-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    type="button"
+                    key={star}
+                    onClick={() => setReviewRating(star)}
+                    className="focus:outline-none"
+                  >
+                    <Star
+                      size={24}
+                      className={star <= reviewRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">Your Review</label>
+              <textarea
+                className="w-full border border-gray-300 rounded p-3 focus:ring-black focus:border-black"
+                rows="4"
+                placeholder="Tell us what you think about this product..."
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value)}
+                required
+              ></textarea>
+            </div>
+            <button
+              type="submit"
+              disabled={isSubmittingReview}
+              className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800 transition-colors disabled:bg-gray-400"
+            >
+              {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+            </button>
+          </form>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useCart } from '../context/CartContext';
@@ -10,9 +10,20 @@ import { Tag } from 'lucide-react';
 import { loadRazorpayScript } from '../utils/loadRazorpay';
 
 const CheckoutPage = () => {
-  const { cart, getCartTotal, clearCart } = useCart();
+  const { cart: contextCart, getCartTotal: getContextCartTotal, clearCart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
+
+  const directPurchase = location.state?.directPurchase;
+
+  const cart = directPurchase ? [directPurchase] : contextCart;
+  const getCartTotal = () => {
+    if (directPurchase) {
+      return directPurchase.product.price * directPurchase.quantity;
+    }
+    return getContextCartTotal();
+  };
   const [loading, setLoading] = useState(false);
 
   const [couponCode, setCouponCode] = useState('');
@@ -88,12 +99,12 @@ const CheckoutPage = () => {
         throw error;
       }
 
-      clearCart();
+      if (!directPurchase) clearCart();
       navigate('/order-success');
     } catch (err) {
       console.error("Order creation failed:", err);
       if (err.code === '42P01') {
-         clearCart();
+         if (!directPurchase) clearCart();
          navigate('/order-success');
       } else {
          toast({ title: 'Order Failed', description: err.message, variant: 'destructive' });
@@ -117,7 +128,7 @@ const CheckoutPage = () => {
         return;
       }
 
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || (window.location.hostname === 'localhost' ? 'http://localhost:8000' : 'https://' + window.location.hostname.replace('frontend', 'backend'));
       const orderResponse = await fetch(`${backendUrl}/api/create-order`, {
         method: 'POST',
         headers: {
