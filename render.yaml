@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: backend
+    env: python
+    buildCommand: "cd backend && pip install -r requirements.txt"
+    startCommand: "cd backend && uvicorn server:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: MONGO_URL
+        sync: false
+      - key: DB_NAME
+        sync: false
+
+  - type: web
+    name: frontend
+    env: static
+    # Install with production=false to ensure devDependencies like @craco/craco are installed before building
+    buildCommand: "cd frontend && yarn install --production=false && yarn build"
+    staticPublishPath: "./frontend/build"
+    envVars:
+      - key: NODE_ENV
+        value: production

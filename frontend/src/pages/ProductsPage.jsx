@@ -5,13 +5,13 @@ import Footer from '../components/Footer';
 
 const ProductsPage = () => {
   return (
-    <div>
+    <div className="bg-[#FAF9F6] min-h-screen">
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-        <h1 className="text-4xl md:text-5xl font-black mb-4" style={{ fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
+        <h1 className="text-4xl md:text-5xl font-serif mb-4">
           Our Collection
         </h1>
-        <p className="text-gray-600 mb-8">
+        <p className="text-gray-600 mb-8 font-serif">
           Explore our premium luxury candles, handcrafted with care and natural ingredients.
         </p>
       </div>

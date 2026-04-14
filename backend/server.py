@@ -1,4 +1,5 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -9,15 +10,16 @@ from pydantic import BaseModel, Field, ConfigDict
 from typing import List
 import uuid
 from datetime import datetime, timezone
-
+import razorpay
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
-mongo_url = os.environ['MONGO_URL']
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+db_name = os.environ.get('DB_NAME', 'sentbyher')
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db = client[db_name]
 
 # Create the main app without a prefix
 app = FastAPI()
@@ -65,6 +67,42 @@ async def get_status_checks():
             check['timestamp'] = datetime.fromisoformat(check['timestamp'])
     
     return status_checks
+
+# Razorpay endpoints
+class OrderCreateRequest(BaseModel):
+    amount: float
+    currency: str = "INR"
+
+@api_router.post("/create-order")
+async def create_razorpay_order(order_req: OrderCreateRequest):
+    try:
+        razorpay_key_id = os.environ.get('RAZORPAY_KEY_ID')
+        razorpay_key_secret = os.environ.get('RAZORPAY_KEY_SECRET')
+
+        if not razorpay_key_id or not razorpay_key_secret:
+            return JSONResponse(status_code=500, content={"error": "Razorpay credentials not configured"})
+
+        razorpay_client = razorpay.Client(auth=(razorpay_key_id, razorpay_key_secret))
+
+        # Razorpay expects amount in paise
+        order_amount = int(order_req.amount * 100)
+
+        # Ensure amount is valid (minimum 100 paise = 1 INR)
+        if order_amount < 100:
+             return JSONResponse(status_code=400, content={"error": "Amount must be at least 1 INR"})
+
+        order_data = {
+            "amount": order_amount,
+            "currency": order_req.currency,
+            "payment_capture": 1
+        }
+
+        order = razorpay_client.order.create(data=order_data)
+        # Inject key_id so frontend doesn't need it as an env var if missing
+        order["key_id"] = razorpay_key_id
+        return JSONResponse(status_code=200, content=order)
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 # Include the router in the main app
 app.include_router(api_router)

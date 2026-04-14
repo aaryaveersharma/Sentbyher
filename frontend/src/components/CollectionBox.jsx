@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import collectionImage from '../assets/collection-image.png';
 
 const CollectionBox = () => {
   return (
@@ -12,7 +13,7 @@ const CollectionBox = () => {
               <p className="text-xs md:text-sm text-gray-400 mb-2 font-light tracking-wide">
                 Explore Our Range
               </p>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-light leading-tight group-hover:text-gray-700 transition-colors duration-300" style={{ fontFamily: 'Inter, -apple-system, sans-serif', fontWeight: '300' }}>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl leading-tight group-hover:text-gray-700 transition-colors duration-300 font-serif">
                 View our full<br />collection
               </h2>
             </div>
@@ -20,7 +21,7 @@ const CollectionBox = () => {
             {/* Image Section */}
             <div className="flex items-center justify-center">
               <img
-                src="https://customer-assets.emergentagent.com/job_premium-candles-4/artifacts/m1mipi9e_images%20%281%29%20%282%29.png"
+                src={collectionImage}
                 alt="Candles"
                 className="w-full h-auto object-contain group-hover:scale-110 transition-transform duration-700"
               />
